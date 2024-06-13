@@ -1,9 +1,8 @@
 # CAIDeno
 Unofficial Character.AI API using Deno
-
 # Example
 ```js
-import { CAIDeno } from "https://deno.land/x/caideno@v0.0.1-alpha.1/mod.ts"
+import { CAIDeno } from "https://deno.land/x/caideno/mod.ts"
 const CAI = new CAIDeno();
 
 (async function() {

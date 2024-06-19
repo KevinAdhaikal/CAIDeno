@@ -337,7 +337,7 @@ class Character_Class {
             'Authorization': `Token ${this.prop.token}`
         })).json()
     }
-    public async connect(char_id: string): Promise<CharacterConnectInfo> {
+    public async connect(char_id: string): Promise<CharacterRecentList> {
         if (!this.prop.token) throw "Please login first"
         if (this.prop.join_type == 2) throw "You're already connectetd in Group Chat, please disconnect first"
 

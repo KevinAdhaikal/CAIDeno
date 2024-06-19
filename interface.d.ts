@@ -303,7 +303,7 @@ declare interface CharacterConnectInfo {
         character_translations: {
             name: object;
         };
-        default_voice_id: string;
+        default_voice_id?: string;
     }]
 }
 

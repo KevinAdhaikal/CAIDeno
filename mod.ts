@@ -299,7 +299,7 @@ class Character_Class {
         if (!this.prop.token) throw "Please login first"
         return await (await https_fetch(`https://beta.character.ai/chat/character/${character_id}/votes/`, "GET", {"Authorization": `Token ${this.prop.token}`})).json();
     }
-    public async votes_array(character_id: string[]): Promise<{status: string, upvotes_per_character: {}}> {
+    public async votes_array(character_id: string[]): Promise<{status: string, upvotes_per_character: Record<string, number>}> {
         if (!this.prop.token) throw "Please login first"
         return await (await https_fetch(`https://beta.character.ai/chat/characters/votes/`, "POST", {"Authorization": `Token ${this.prop.token}`}, JSON.stringify({"character_ids": character_id}))).json();
     }

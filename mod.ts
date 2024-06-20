@@ -808,8 +808,8 @@ class GroupChat_Class {
         }), false, 0, false)
         return true;
     }
-    public async edit_message(candidate_id: string, turn_id: string, new_message: string): Promise<MessageInfo> {
-        const result = <MessageInfo>await send_ws(this.prop.ws[0], JSON.stringify({
+    public async edit_message(candidate_id: string, turn_id: string, new_message: string): Promise<GroupChatInfo> {
+        const result = <GroupChatInfo>await send_ws(this.prop.ws[0], JSON.stringify({
             "rpc": {
                 "method": "unused_command",
                 "data": {

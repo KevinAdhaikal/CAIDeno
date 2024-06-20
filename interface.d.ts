@@ -288,6 +288,25 @@ declare interface CharacterRecentList {
     }];
 }
 
+declare interface CharacterConnectInfo {
+    chats: [{
+        chat_id: string;
+        create_time: string;
+        creator_id: string;
+        character_id: string;
+        state: string;
+        type: string;
+        visibility: string;
+        character_name: string;
+        character_avatar_uri: string;
+        character_visibility: string;
+        character_translations: {
+            name: object;
+        };
+        default_voice_id: string;
+    }]
+}
+
 declare interface SingleCharacterChatInfo {
     turn: {
         turn_key: {
@@ -494,43 +513,45 @@ declare interface GroupChatJoinInviteInfo {
 }
 
 declare interface GroupChatInfo {
-    channel: string;
-    pub: {
-        data: {
-            turn: {
-                turn_key: {
-                    chat_id: string;
-                    turn_id: string;
-                };
-                create_time: string;
-                last_update_time: string;
-                state: string;
-                author: {
-                    author_id: string;
-                    is_human: boolean;
-                    name: string;
-                };
-                candidates: [{
-                    candidate_id: string;
-                    create_time: string;
-                    raw_content: string;
-                    tti_image_rel_path: string;
-                    base_candidate_id: string;
-                    editor: {
-                        author_id: string;
+    push: {
+        channel: string;
+        pub: {
+            data: {
+                turn: {
+                    turn_key: {
+                        chat_id: string;
+                        turn_id: string;
                     };
-                    is_final: boolean;
-                }];
-                primary_candidate_id: string;
+                    create_time: string;
+                    last_update_time: string;
+                    state: string;
+                    author: {
+                        author_id: string;
+                        is_human: boolean;
+                        name: string;
+                    };
+                    candidates: [{
+                        candidate_id: string;
+                        create_time: string;
+                        raw_content: string;
+                        tti_image_rel_path: string;
+                        base_candidate_id: string;
+                        editor: {
+                            author_id: string;
+                        };
+                        is_final: boolean;
+                    }];
+                    primary_candidate_id: string;
+                };
+                chat_info: {
+                    type: string;
+                };
+                command: string;
+                request_id: string;
             };
-            chat_info: {
-                type: string;
-            };
-            command: string;
-            request_id: string;
+            offset: number;
         };
-        offset: number;
-    };
+    }
 }
 
 declare interface HistoryChatTurnsInfo {

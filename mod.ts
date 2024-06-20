@@ -1265,6 +1265,7 @@ export class CAIDeno extends EventEmitter {
      * Start client initialization with login.  
      *   
      * Example: `await library_name.login("Character.AI Token")`
+     * @see {@link https://github.com/KevinAdhaikal/CAINode?tab=readme-ov-file#login|here} for tutorial how to get Character.AI Token.
     */
     public async login(token: string): Promise<boolean> {
         this.prop.edge_rollout = (await https_fetch("https://character.ai/", "GET")).headers.getSetCookie()[1].split("; ")[0].split("=")[1]

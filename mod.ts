@@ -114,9 +114,21 @@ class User_Class {
     constructor(prop: CAIDeno_prop) {
         this.prop = prop
     }
-    public info(): UserData {
+
+    /**
+     * Get your current information account.  
+     *   
+     * Example: `library_name.user.info`
+    */
+    public get info(): UserData {
         return !this.prop.token ? (() => {throw "Please login first"})() : this.prop.user_data
     }
+
+    /**
+     * Get your current settings information account.  
+     *   
+     * Example: `await library_name.user.settings()`
+    */
     public async settings(): Promise<UserSettings> {
         if (!this.prop.token) throw "Please login first"
         return await (await https_fetch("https://plus.character.ai/chat/user/settings/", "GET", {"Authorization": `Token ${this.prop.token}`})).json()
@@ -129,6 +141,11 @@ class Image_Class {
         this.prop = prop;
     }
 
+    /**
+     * Generate avatar image using prompt.  
+     *   
+     * Example: `await library_name.image.generate_avatar("your prompt")`
+    */
     public async generate_avatar(prompt_name: string): Promise<{result: { "prompt": string; "url": string;} [] }> {
         console.log(this.prop.user_data)
         if (!this.prop.token) throw "Please login first"
@@ -138,6 +155,12 @@ class Image_Class {
             "model_version":"v1"
         }))).json()
     }
+
+    /**
+     * Generate image using prompt.  
+     *   
+     * Example: `await library_name.image.generate_image("your prompt")`
+    */
     public async generate_image(prompt_name: string): Promise<{ image_rel_path: string }> {
         if (!this.prop.token) throw "Please login first"
         return await (await https_fetch("https://plus.character.ai/chat/generate-image/", "POST", {"Authorization": `Token ${this.prop.token}`, "Content-Type": "application/json"}, JSON.stringify({"image_description":prompt_name}))).json()
@@ -151,6 +174,11 @@ class Persona_Class {
         this.prop = prop;
     }
 
+    /**
+     * Create your personality for your character.  
+     *   
+     * Example: `await library_name.persona.create("Persona Name", "Description")`
+    */
     public async create(name: string, description: string): Promise<{status: string, persona: Persona}> {
         if (!this.prop.token) throw "Please login first"
         if (!name && !description) throw "Please input correct Name and Description"
@@ -172,11 +200,25 @@ class Persona_Class {
             "strip_img_prompt_from_msg": false
         }))).json()
     }
+
+    /**
+     * Get your personality information.  
+     *   
+     * Example: `await library_name.persona.info("Your External Persona ID")`
+    */
     public async info(external_persona_id: string): Promise<{error: string, persona: Persona}> {
         if (!this.prop.token) throw "Please login first"
         if (!external_persona_id) throw "Please input external_persona_id"
         return await (await https_fetch(`https://plus.character.ai/chat/persona/?id=${external_persona_id}`, "GET", {"Authorization": `Token ${this.prop.token}`})).json()
     }
+
+    /**
+     * Set your default personality specifically.  
+     *   
+     * Example  
+     * - Set: `await library_name.persona.set_default("Your External Persona ID")`  
+     * - Unset: `await library_name.persona.set_default()`
+    */
     public async set_default(external_persona_id: string = ""): Promise<boolean> {
         if (!this.prop.token) throw "Please login first"
 
@@ -187,10 +229,22 @@ class Persona_Class {
         await https_fetch("https://plus.character.ai/chat/user/update_settings/", "POST", {"Authorization": `Token ${this.prop.token}`, "Content-Type": "application/json"}, JSON.stringify(result))
         return true;
     }
+
+    /**
+     * Get all your personality data.  
+     *   
+     * Example: `await library_name.persona.list()`
+    */
     public async list(): Promise<PersonaList[]> {
         if (!this.prop.token) throw "Pleae login first"
         return await (await https_fetch(`https://plus.character.ai/chat/personas/?force_refresh=1`, "GET", {"Authorization": `Token ${this.prop.token}`})).json()
     }
+
+    /**
+     * Update your personality specifically.  
+     *   
+     * Example: `await library_name.persona.update("Your External Persona ID", "Name", "Description")`
+    */
     public async update(external_persona_id: string, name: string, description: string): Promise<{status: string, persona: Persona}> {
         if (!this.prop.token) throw "Please login first"
 
@@ -219,6 +273,12 @@ class Persona_Class {
             "enabled": false
         }))).json()
     }
+
+    /**
+     * Delete your personality spesifically.  
+     *   
+     * Example: `await library_name.persona.delete("Your External Persona ID")`
+    */
     public async delete(external_persona_id: string): Promise<{status: string, persona: Persona}> {
         if (!this.prop.token) throw "Please login first"
         
@@ -250,6 +310,14 @@ class Persona_Class {
             "name": get_info.persona.name
         }))).json()
     }
+
+    /**
+     * Set a custom personality for your character specifically.  
+     *   
+     * Example  
+     * - Set: `await library_name.persona.set_character("Your Character ID", "Your External Persona ID")`  
+     * - Unset: `await library_name.persona.set_character("Your Character ID")`
+    */
     public async set_character(character_id: string, external_persona_id: string = ""): Promise<boolean> {
         if (!this.prop.token) throw "Please login first"
 
@@ -276,14 +344,31 @@ class Explore_Class {
         this.prop = prop;
     }
 
+    /**
+     * Get the list of characters displayed by the Character.AI server.  
+     *   
+     * Example: `await library_name.explore.featured()`
+    */
     public async featured(): Promise<ExploreCharacter> {
         if (!this.prop.token) throw "Please login first"
         return await (await https_fetch("https://neo.character.ai/recommendation/v1/featured", "GET", {"Authorization": `Token ${this.prop.token}`})).json()
     }
+
+    /**
+     * Get a list of characters recommended by the Character.AI server.  
+     *   
+     * Example: `await library_name.explore.for_you()`
+    */
     public async for_you() :Promise<ExploreCharacter> {
         if (!this.prop.token) throw "Please login first"
         return await (await https_fetch("https://neo.character.ai/recommendation/v1/user", "GET", {"Authorization": `Token ${this.prop.token}`})).json()
     }
+
+    /**
+     * Get the list of characters from the character category exploration.  
+     *   
+     * Example: `await library_name.explore.character_categories()`
+    */
     public async character_categories(): Promise<CharacterCategories> {
         return (await (await https_fetch("https://plus.character.ai/chat/curated_categories/characters/", "GET")).json()).characters_by_curated_category
     }
@@ -295,14 +380,34 @@ class Character_Class {
         this.prop = prop
     }
 
+    /**
+     * Get character vote information.  
+     *   
+     * Example: `await library_name.character.votes("Character ID")`
+    */
     public async votes(character_id: string): Promise<{status: string, votes: number}> {
         if (!this.prop.token) throw "Please login first"
         return await (await https_fetch(`https://beta.character.ai/chat/character/${character_id}/votes/`, "GET", {"Authorization": `Token ${this.prop.token}`})).json();
     }
+
+    /**
+     * Get character vote information in array.  
+     *   
+     * Example: `await library_name.character.votes_array("Character ID")`
+    */
     public async votes_array(character_id: string[]): Promise<{status: string, upvotes_per_character: Record<string, number>}> {
         if (!this.prop.token) throw "Please login first"
         return await (await https_fetch(`https://beta.character.ai/chat/characters/votes/`, "POST", {"Authorization": `Token ${this.prop.token}`}, JSON.stringify({"character_ids": character_id}))).json();
     }
+
+    /**
+     * Used for vote the character.  
+     *   
+     * Example  
+     * - Like: `await library_name.character.vote("Character ID", true)`  
+     * - Dislike: `await library_name.character.vote("Character ID", false)`  
+     * - Cancel: `await library_name.character.vote("Character ID", null)` or `library_name.character.vote("Character ID")`
+    */
     public async vote(character_id: string, vote: boolean | null = null): Promise<void> {
         if (!this.prop.token) throw "Please login first"
         await (await https_fetch(`https://plus.character.ai/chat/character/vote/`, "POST", {"Authorization": `Token ${this.prop.token}`}, JSON.stringify({
@@ -310,18 +415,36 @@ class Character_Class {
             "vote":vote
         }))).json();
     }
+
+    /**
+     * Search for a character by name or query.  
+     *   
+     * Example: `await library_name.character.search("Query")`
+    */
     public async search (name: string): Promise<CharactersSearchInfo> {
         if (!this.prop.token) throw "Please login first"
         return await (await https_fetch(`https://beta.character.ai/chat/characters/search/?query=${name}`, "GET", {
             'Authorization': `Token ${this.prop.token}`
         })).json()
     }
+
+    /**
+     * Search character by name and suggested by Character.AI Server.  
+     *   
+     * Example: `await library_name.character.serach_suggest("Query")`
+    */
     public async serach_suggest(name: string): Promise<CharactersSearchSuggestInfo> {
         if (!this.prop.token) throw "Please login first"
         return await (await https_fetch(`https://beta.character.ai/chat/characters/suggest/?query=${name}`, "GET", {
             'Authorization': `Token ${this.prop.token}`
         })).json()
     }
+
+    /**
+     * Get detailed information about characters.  
+     *   
+     * Example: `await library_name.character.info("Character External ID")`
+    */
     public async info(char_extern_id: string): Promise<CharacterInformation> {
         if (!this.prop.token) throw "Please login first"
         return await (await https_fetch("https://beta.character.ai/chat/character/info/", "POST", {
@@ -331,12 +454,24 @@ class Character_Class {
             "external_id": char_extern_id
         }))).json()
     }
+
+    /**
+     * Get a list of recent chat activity.  
+     *   
+     * Example: `await library_name.character.recent_list()`
+    */
     public async recent_list(): Promise<CharacterRecentList> {
         if (!this.prop.token) throw "Please login first"
         return await (await https_fetch("https://neo.character.ai/chats/recent/", "GET", {
             'Authorization': `Token ${this.prop.token}`
         })).json()
     }
+
+    /**
+     * Connect client to character chat.  
+     *   
+     * Example: `await library_name.character.connect("Character ID")`
+    */
     public async connect(char_id: string): Promise<CharacterRecentList> {
         if (!this.prop.token) throw "Please login first"
         if (this.prop.join_type == 2) throw "You're already connectetd in Group Chat, please disconnect first"
@@ -354,6 +489,12 @@ class Character_Class {
 
         return res;
     }
+
+    /**
+     * Disconnecting client from character chat.  
+     *   
+     * Example: `library_name.character.disconnect()`
+    */
     public disconnect(): boolean {
         if (!this.prop.token) throw "Please login first"
         if (!this.prop.join_type) throw "You're not connected from Single character Chat"
@@ -364,6 +505,18 @@ class Character_Class {
         this.prop.join_type = 0;
         return true;
     }
+
+    /**
+     * Send message to character.  
+     *   
+     * Example (Default)  
+     * - Without manual turn: `await library_name.character.send_message("Your Message")`  
+     * - With manual turn: `await library_name.character.send_message("Your Message", true)`  
+     *   
+     * Example (With image URL)  
+     * - Without manual turn: `await library_name.character.send_message("Your Message", false, "URL Link")`  
+     * - With manual turn: `await library_name.character.send_message("Your Message", true, "URL Link")`
+    */
     public async send_message(message: string, manual_turn: boolean = false, image_url_path: string = ""): Promise<SingleCharacterChatInfo> {
         if (!this.prop.token) throw "Please login first"
         if (!this.prop.join_type) throw "You're not connected from Single character Chat"
@@ -425,6 +578,12 @@ class Character_Class {
             "origin_id": "Android"
         }), true, Number(!manual_turn), !manual_turn)
     }
+
+    /**
+     * Generating message response from character.  
+     *   
+     * Example: `await library_name.character.generate_turn()`
+    */
     public async generate_turn(): Promise<SingleCharacterChatInfo> {
         if (!this.prop.token) throw "Please login first"
         if (!this.prop.join_type) throw "you must be connected to single chat"
@@ -443,6 +602,12 @@ class Character_Class {
             
         } else throw "This function only works when you're connected on Single Chat, not Group chat"
     }
+
+    /**
+     * Regenerate character message.  
+     *   
+     * Example: `await library_name.character.generate_turn_candidate("Turn ID")`
+    */
     public async generate_turn_candidate(turn_id: string): Promise<SingleCharacterChatInfo> {
         if (!this.prop.token) throw "Please login first"
         if (this.prop.join_type != 1) throw "You're not connected to Single Character Chat"
@@ -486,6 +651,12 @@ class Character_Class {
             "origin_id": "Android"
         }), true, 1, true)
     }
+
+    /**
+     * Reset the conversation between you and the character.  
+     *   
+     * Example: `await library_name.character.reset_conversation()`
+    */
     public async reset_conversation(): Promise<SingleCharacterChatInfo> {
         return <SingleCharacterChatInfo>await send_ws(this.prop.ws[1], JSON.stringify({
             "command": "create_chat",
@@ -503,6 +674,12 @@ class Character_Class {
             "origin_id": "Android"
         }), true, 1, false)
     }
+
+    /**
+     * Delete character message.  
+     *   
+     * Example: `await library_name.character.delete_message("Turn ID")`
+    */
     public async delete_message(turn_id: string | string[]): Promise<boolean> {
         if (!this.prop.token) throw "Please login first"
         await send_ws(this.prop.ws[1], JSON.stringify({
@@ -516,6 +693,12 @@ class Character_Class {
         }), false, 0, false)
         return true;
     }
+
+    /**
+     * Edit the character message.  
+     *   
+     * Example: `await library_name.character.edit_message("Candidate ID", "Turn ID", "New Message")`
+    */
     public async edit_message(candidate_id: string, turn_id: string, new_message: string): Promise<SingleCharacterChatInfo> {
         if (!this.prop.token) throw "Please login first"
         const result = <SingleCharacterChatInfo>await send_ws(this.prop.ws[1], JSON.stringify({
@@ -555,12 +738,23 @@ class GroupChat_Class {
         this.prop = prop;
     }
 
+    /**
+     * Get all list available group chat in account.  
+     *   
+     * Example: `await library_name.group_chat.list()`
+    */
     public async list(): Promise<GroupChatListInfo> {
         if (!this.prop.token) throw "Please login first"
         return await (await https_fetch("https://neo.character.ai/murooms/?include_turns=false", "GET", {
             'Authorization': `Token ${this.prop.token}`
         })).json()
     }
+
+    /**
+     * Connecting to group chat by the Room ID.  
+     *   
+     * Example: `await library_name.group_chat.connect("Room ID")`
+    */
     public async connect(room_id: string): Promise<GroupChatConnectInfo> {
         if (!this.prop.token) throw "Please login first"
         if (this.prop.join_type == 2) throw "You are already connected from the room"
@@ -571,6 +765,12 @@ class GroupChat_Class {
         this.prop.join_type = 2;
         return res;
     }
+
+    /**
+     * Disconnecting from group chat by the Room ID.  
+     *   
+     * Example: `await library_name.group_chat.disconnect()`
+    */
     public async disconnect(): Promise<GroupChatDisconnectInfo> {
         if (!this.prop.token) throw "Please login first"
         if (this.prop.join_type != 2) throw "You're not connected to any Group Chat"
@@ -580,7 +780,15 @@ class GroupChat_Class {
         this.prop.current_chat_id = "";
         return res;
     }
-    public async create(title_room: string, char_id: string): Promise<GroupChatCreateInfo> {
+
+    /**
+     * Create group chat.  
+     *   
+     * Example  
+     * - 1 character: `await library_name.group_chat.create("Title Room", "Character ID")`  
+     * - more than 1 character: `await library_name.group_chat.create("Title Room", ["Character ID 1", "Character ID 2", ...])`
+    */
+    public async create(title_room: string, char_id: string | string[]): Promise<GroupChatCreateInfo> {
         if (!this.prop.token) throw "Please login first"
         return await (await https_fetch("https://neo.character.ai/muroom/create", "POST", {'Authorization': `Token ${this.prop.token}`}, JSON.stringify({
             "characters": Array.isArray(char_id) ? char_id : [char_id],
@@ -593,11 +801,23 @@ class GroupChat_Class {
             "with_greeting": true
         }))).json()
     }
+
+    /**
+     * Delete group chat.  
+     *   
+     * Example: `await library_name.group_chat.delete("Room ID")`
+    */
     public async delete(room_id: string): Promise<GroupChatDeleteInfo> {
         if (!this.prop.token) throw "Please login first"
         if (this.prop.join_type == 2) await send_ws(this.prop.ws[0], `{"unsubscribe":{"channel":"room:${this.prop.current_chat_id}"},"id":1}`, true, 0, false)
         return await (await https_fetch(`https://neo.character.ai/muroom/${this.prop.join_type == 2 ? this.prop.current_chat_id : room_id}/`, "DELETE", {'Authorization': `Token ${this.prop.token}`})).json()
     }
+
+    /**
+     * Rename group chat.  
+     *   
+     * Example: `await library_name.group_chat.rename("New Name", "Room ID")`
+    */
     public async rename(new_name: string, room_id: string): Promise<GroupChatActivityInfo> {
         if (!this.prop.token) throw "Pleae login first"
         return await (await https_fetch(`https://neo.character.ai/muroom/${this.prop.join_type == 2 ? this.prop.current_chat_id : room_id}/`, "PATCH", {'Authorization': `Token ${this.prop.token}`}, JSON.stringify([
@@ -610,11 +830,23 @@ class GroupChat_Class {
             }
         ]))).json()
     }
+
+    /**
+     * Joining group chat using invite code.  
+     *   
+     * Example: `await library_name.group_chat.join_group_invite("Group Chat Invite Code")`
+    */
     public async join_group_invite(invite_code: string): Promise<GroupChatJoinInviteInfo> {
         if (!this.prop.token) throw "Please login first"
         await https_fetch(`https://neo.character.ai/muroom/?join_token=${invite_code}`, "GET", {'Authorization': `Token ${this.prop.token}`})
         return await (await https_fetch("https://neo.character.ai/muroom/join", "POST", {'Authorization': `Token ${this.prop.token}`}, `{"join_token":"${invite_code}"}`)).json()
     }
+
+    /**
+     * Add a character with Character ID to the group chat.  
+     *   
+     * Example: `await library_name.group_chat.char_add("Character ID")`
+    */
     public async char_add(char_id: string | string[]): Promise<GroupChatActivityInfo> {
         if (!this.prop.token) throw "Please login first"
         if (this.prop.join_type != 2) throw "You're not connected to any Group Chat"
@@ -642,6 +874,12 @@ class GroupChat_Class {
             }]))).json()
         }
     }
+
+    /**
+     * Remove a character with Character ID from the group chat.  
+     *   
+     * Example: `await library_name.group_chat.char_remove("Character ID")`
+    */
     public async char_remove(char_id: string | string[]): Promise<GroupChatActivityInfo> {
         if (!this.prop.token) throw "Please login first"
         if (this.prop.join_type != 2) throw "You're not connected to any Group Chat"
@@ -669,6 +907,14 @@ class GroupChat_Class {
             }]))).json()
         }
     }
+
+    /**
+     * Send message to group chat.  
+     *   
+     * Example  
+     * - Default (Without Image): `await library_name.group_chat.send_message("Your Message")`  
+     * - With Image: `await library_name.group_chat.send_message("Your Message", "URL Image")`
+    */
     public async send_message(message: string, image_url_path: string = ""): Promise<GroupChatInfo> {
         if (!this.prop.token) throw "Please login first"
         if (!this.prop.join_type) throw "you must be connected to Group Chat"
@@ -708,6 +954,12 @@ class GroupChat_Class {
             }), true, 2, false)
         } else throw "This function only works when you're connected on Group Chat, not Single chat"
     }
+
+    /**
+     * Generating message response character from group chat.  
+     *   
+     * Example: `await library_name.group_chat.generate_turn()`
+    */
     public async generate_turn(): Promise<GroupChatInfo> {
         if (!this.prop.token) throw "Please login first"
         if (!this.prop.join_type) throw "you must be connected to Group Chat"
@@ -732,6 +984,12 @@ class GroupChat_Class {
             }), true, 2, true)
         } else throw "This function only works when you're connected on Group Chat, not Single chat"
     }
+
+    /**
+     * Regenerate character message.  
+     *   
+     * Example: `await library_name.group_chat.generate_turn_candidate()`
+    */
     public async generate_turn_candidate(turn_id: string, char_id: string): Promise<GroupChatInfo> {
         if (!this.prop.token) throw "Please login first"
         if (!this.prop.join_type || this.prop.join_type != 2) throw "You're not connected to any Group Chat"
@@ -755,6 +1013,12 @@ class GroupChat_Class {
             "id": 1
         }), true, 2, true)
     }
+
+    /**
+     * Reset conversation in group chat.  
+     *   
+     * Example: `await library_name.group_chat.reset_conversation()`
+    */
     public async reset_conversation(): Promise<GroupChatInfo> {
         if (!this.prop.token) throw "Please login first"
         if (!this.prop.join_type || this.prop.join_type != 2) throw "You're not connected to any Group Chat"
@@ -793,6 +1057,12 @@ class GroupChat_Class {
             "id": 1
         }), true, 2, false)
     }
+
+    /**
+     * Delete user/character message.  
+     *   
+     * Example: `await library_name.group_chat.delete_message("Turn ID")`
+    */
     public async delete_message(turn_id: string | string[]): Promise<boolean> {
         if (!this.prop.token) throw "Please login first"
         if (!this.prop.join_type || this.prop.join_type != 2) throw "You're not connected to any Group Chat"
@@ -808,6 +1078,12 @@ class GroupChat_Class {
         }), false, 0, false)
         return true;
     }
+
+    /**
+     * Edit user/character message.  
+     *   
+     * Example: `await library_name.group_chat.edit_message("Turn ID")`
+    */
     public async edit_message(candidate_id: string, turn_id: string, new_message: string): Promise<GroupChatInfo> {
         const result = <GroupChatInfo>await send_ws(this.prop.ws[0], JSON.stringify({
             "rpc": {
@@ -843,6 +1119,12 @@ class GroupChat_Class {
         }
         return result;
     }
+
+    /**
+     * Select the turn of character chat by yourself.  
+     *   
+     * Example: `await library_name.group_chat.select_turn("Character ID")`
+    */
     public async select_turn(char_id: string): Promise<GroupChatInfo> {
         if (!this.prop.token) throw "Please login first"
         if (!this.prop.join_type && this.prop.join_type != 2) throw "You're not connected to any Group Chat"
@@ -871,6 +1153,13 @@ class Chat_Class {
         this.prop = prop;
     }
 
+    /**
+     * Get a history chat from group or single chat.  
+     *   
+     * Example  
+     * - Already join Group/Single chat: `await library_name.chat.history_chat_turns()`  
+     * - Manual: `await library_name.chat.history_chat_turns("Chat ID")`
+    */
     public async history_chat_turns(chat_id: string): Promise<HistoryChatTurnsInfo> {
         if (!this.prop.token) throw "Please login first"
         return !this.prop.token ? (() => {
@@ -884,14 +1173,99 @@ class Chat_Class {
 export class CAIDeno extends EventEmitter {
     private prop: CAIDeno_prop = new CAIDeno_prop() // Property
 
-    public user = new User_Class(this.prop); // User Class
-    public image = new Image_Class(this.prop); // Image Class
-    public character = new Character_Class(this.prop); // Character Class
-    public explore = new Explore_Class(this.prop); // Explore Class
-    public persona = new Persona_Class(this.prop); // Persona Class
-    public group_chat = new GroupChat_Class(this.prop); // Group Chat Class
-    public chat = new Chat_Class(this.prop) // Chat Class
+    /**
+     * User function list  
+     *   
+     * - `info`: Get your current information account.  
+     * - `settings()`: Get your current settings information account.
+    */
+    user = new User_Class(this.prop) // User Class
+    
+    /**
+     * Image function list  
+     *   
+     * - `generate_avatar()`: Generate avatar image using prompt.  
+     * - `generate_image()`: Generate image using prompt.
+    */
+    image = new Image_Class(this.prop); // Image Class
 
+    /**
+     * Persona function list  
+     *   
+     * - `create()`: Create your personality for your character.  
+     * - `info()`: Get your personality information.  
+     * - `set_default()`: Set your default personality specifically.  
+     * - `list()`: Get all your personality data.  
+     * - `update()`: Update your personality specifically.  
+     * - `delete()`: Delete your personality spesifically.  
+     * - `set_character()`: Set a custom personality for your character specifically.
+    */
+    persona = new Persona_Class(this.prop); // Persona Class
+
+    /**
+     * Explore function list  
+     *   
+     * - `featured()`: Get the list of characters displayed by the Character.AI server.  
+     * - `for_you()`: Get a list of characters recommended by the Character.AI server.  
+     * - `character_categories()`: Get the list of characters from the character category exploration.
+    */
+    explore = new Explore_Class(this.prop); // Explore Class
+
+    /**
+     * Character function list  
+     *   
+     * - `votes()`: Get character vote information.  
+     * - `votes_array()`: Get character vote information in array.  
+     * - `vote()`: Used for vote the character.  
+     * - `search()`: Search for a character by name or query.  
+     * - `search_suggest()`: Search character by name and suggested by Character.AI Server.  
+     * - `info()`: Get detailed information about characters.  
+     * - `recent_list()`: Get a list of recent chat activity.  
+     * - `connect()`: Connect client to character chat.  
+     * - `disconnect()`: Disconnecting client from character chat.  
+     * - `send_message()`: Send message to character.  
+     * - `generate_turn()`: Generating message response from character.  
+     * - `generate_turn_candidate()`: Regenerate character message.  
+     * - `reset_conversation()`: Reset the conversation between you and the character.  
+     * - `delete_message()`: Delete character message.  
+     * - `edit_message()`: Edit the character message.
+    */
+    character = new Character_Class(this.prop); // Character Class
+
+    /**
+     * Group chat function list  
+     *   
+     * - `list()`: Get all list available group chat in account.  
+     * - `connect()`: Connecting to group chat by the Room ID.  
+     * - `disconnect()`: Disconnecting from group chat by the Room ID.  
+     * - `create()`: Create group chat.  
+     * - `delete()`: Delete group chat.  
+     * - `rename()`: Rename group chat.  
+     * - `join_group_invite()`: Joining group chat using invite code.  
+     * - `char_add()`: Add a character with Character ID to the group chat.  
+     * - `char_remove()`: Remove a character with character_id from the group chat.  
+     * - `send_message()`: Send message to group chat.  
+     * - `generate_turn()`: Generating message response character from group chat.  
+     * - `generate_turn_candidate()`: Regenerate character message.  
+     * - `reset_conversation()`: Reset conversation in group chat.  
+     * - `delete_message()`: Delete user/character message.  
+     * - `edit_message()`: Edit user/character message.  
+     * - `select_turn()`: Select the turn of character chat by yourself.
+    */
+    group_chat = new GroupChat_Class(this.prop); // Group Chat Class
+
+    /**
+     * Chat function list  
+     *   
+     * - `history_chat_turns()`: Get a history chat from group or single chat.
+    */
+    chat = new Chat_Class(this.prop) // Chat Class
+
+    /**
+     * Start client initialization with login.  
+     *   
+     * Example: `await library_name.login("Character.AI Token")`
+    */
     public async login(token: string): Promise<boolean> {
         this.prop.edge_rollout = (await https_fetch("https://character.ai/", "GET")).headers.getSetCookie()[1].split("; ")[0].split("=")[1]
         this.prop.user_data = await (await https_fetch("https://plus.character.ai/chat/user/", "GET", {
@@ -908,6 +1282,11 @@ export class CAIDeno extends EventEmitter {
         return true;
     }
 
+    /**
+     * Logout from the client.  
+     *   
+     * Example: `library_name.logout()`
+    */
     public logout(): boolean {
         if (!this.prop.ws[0] && !this.prop.ws[1]) return false;
         

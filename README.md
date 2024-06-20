@@ -5,7 +5,7 @@ A lighweight Unofficial Character.AI API using Deno, It does not require a puppe
 
 
 ## Table of contents
-- [Example usage](#example_usage)
+- [Example usage](#example-usage)
 - [Client](#client)  
    - [login](#login)  
    - [logout](#logout)  

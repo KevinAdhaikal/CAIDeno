@@ -881,9 +881,8 @@ class Chat_Class {
     }
 }
 
-export class CAIDeno {
+export class CAIDeno extends EventEmitter {
     private prop: CAIDeno_prop = new CAIDeno_prop() // Property
-    private eventEmitter = new EventEmitter(); // Event Emitter
 
     public user = new User_Class(this.prop); // User Class
     public image = new Image_Class(this.prop); // Image Class
@@ -901,8 +900,8 @@ export class CAIDeno {
         
         if (!this.prop.user_data.user.user.id) throw "Not a valid Character AI Token"
         this.prop.ws = [
-            await open_ws("wss://neo.character.ai/connection/websocket", `edge_rollout=${this.prop.edge_rollout}; HTTP_AUTHORIZATION="Token ${token}"`, this.prop.user_data.user.user.id, this.eventEmitter),
-            await open_ws("wss://neo.character.ai/ws/", `edge_rollout=${this.prop.edge_rollout}; HTTP_AUTHORIZATION="Token ${token}"`, 0, this.eventEmitter)
+            await open_ws("wss://neo.character.ai/connection/websocket", `edge_rollout=${this.prop.edge_rollout}; HTTP_AUTHORIZATION="Token ${token}"`, this.prop.user_data.user.user.id, this),
+            await open_ws("wss://neo.character.ai/ws/", `edge_rollout=${this.prop.edge_rollout}; HTTP_AUTHORIZATION="Token ${token}"`, 0, this)
         ]
         this.prop.token = token
 
@@ -920,13 +919,9 @@ export class CAIDeno {
         this.prop.ws = []
         this.prop.token = ""
         this.prop.user_data = <UserData>{}
-        this.eventEmitter.removeAllListeners("message")
+        this.removeAllListeners("message")
 
         return true;
-    }
-
-    on(event: string, listener: (...args: string[]) => void) {
-        this.eventEmitter.on(event, listener);
     }
 }
 
